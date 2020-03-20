@@ -1,9 +1,9 @@
 {
     "type": "package",
-    "name": "mercurymedia/elm-datetime-picker",
+    "name": "rametta/elm-datetime-picker",
     "summary": "a datetime picker component",
     "license": "MIT",
-    "version": "2.0.2",
+    "version": "2.0.0",
     "exposed-modules": [
         "DurationDatePicker",
         "SingleDatePicker"
