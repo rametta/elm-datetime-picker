@@ -3,7 +3,7 @@
     "name": "rametta/elm-datetime-picker",
     "summary": "a datetime picker component",
     "license": "MIT",
-    "version": "1.0.0",
+    "version": "3.0.1",
     "exposed-modules": [
         "DurationDatePicker",
         "SingleDatePicker"
