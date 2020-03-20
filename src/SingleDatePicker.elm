@@ -33,8 +33,8 @@ import Browser.Events
 import DatePicker.Icons as Icons
 import DatePicker.Styles
 import DatePicker.Utilities as Utilities
-import Html exposing (Html, div, select, span, text)
-import Html.Attributes exposing (class, disabled, id)
+import Html exposing (Html, button, div, select, span, text)
+import Html.Attributes exposing (class, disabled, id, type_)
 import Html.Events exposing (on, onClick, onMouseOut, onMouseOver)
 import Html.Events.Extra exposing (targetValueIntParse)
 import Json.Decode as Decode
@@ -94,7 +94,6 @@ type alias Settings msg =
     , dateStringFn : Zone -> Posix -> String
     , timeStringFn : Zone -> Posix -> String
     , zone : Zone
-    , isMouseOverDisabled : Bool
     , isFooterDisabled : Bool
     }
 
@@ -127,7 +126,6 @@ defaultSettings zone internalMsg =
     , dateStringFn = \_ _ -> ""
     , timeStringFn = \_ _ -> ""
     , zone = zone
-    , isMouseOverDisabled = False
     , isFooterDisabled = False
     }
 
@@ -245,7 +243,7 @@ type Msg
     | PrevYear
     | SetHoveredDay Posix
     | ClearHoveredDay
-    | SetDay
+    | SetDay Posix
     | SetHour Int
     | SetMinute Int
     | Close
@@ -292,10 +290,10 @@ update settings msg (DatePicker model) =
                 ClearHoveredDay ->
                     ( DatePicker { model | hovered = Nothing }, Nothing )
 
-                SetDay ->
+                SetDay day ->
                     let
                         time =
-                            determineDateTime settings.zone settings.dateTimeProcessor.isDayDisabled model.pickedTime model.hovered
+                            determineDateTime settings.zone settings.dateTimeProcessor.isDayDisabled model.pickedTime (Just <| Utilities.enforceTimeBoundaries settings.zone day settings.dateTimeProcessor.allowedTimesOfDay)
                     in
                     ( DatePicker { model | pickedTime = time }, validTimeOrNothing settings time )
 
@@ -486,7 +484,7 @@ viewDay settings model currentMonth pickedTime day =
             Time.posixToParts settings.zone day
 
         isToday =
-            Maybe.map (\tday -> Utilities.doDaysMatch settings.zone day tday) settings.focusedDate
+            Maybe.map (Utilities.doDaysMatch settings.zone day) settings.focusedDate
                 |> Maybe.withDefault False
 
         isPicked =
@@ -503,23 +501,18 @@ viewDay settings model currentMonth pickedTime day =
         dayClasses =
             DatePicker.Styles.singleDayClasses classPrefix (dayParts.month /= currentMonth) isDisabled isPicked isToday
 
-        defaultAttrs =
-            [ class dayClasses
-            , onClick <| settings.internalMsg (update settings SetDay (DatePicker model))
-            ]
-
         attrs =
             if isDisabled then
                 [ class dayClasses ]
 
-            else if settings.isMouseOverDisabled then
-                defaultAttrs
-
             else
-                (onMouseOver <| settings.internalMsg (update settings (SetHoveredDay day) (DatePicker model))) :: defaultAttrs
+                [ class dayClasses
+                , onClick <| settings.internalMsg (update settings (SetDay day) (DatePicker model))
+                , onMouseOver <| settings.internalMsg (update settings (SetHoveredDay day) (DatePicker model))
+                ]
     in
-    div
-        attrs
+    button
+        ([ type_ "button", disabled isDisabled ] ++ attrs)
         [ text (String.fromInt dayParts.day) ]
 
 

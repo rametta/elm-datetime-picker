@@ -33,8 +33,8 @@ import Browser.Events
 import DatePicker.Icons as Icons
 import DatePicker.Styles
 import DatePicker.Utilities as Utilities
-import Html exposing (Html, div, select, span, text)
-import Html.Attributes exposing (class, disabled, id)
+import Html exposing (Html, button, div, select, span, text)
+import Html.Attributes exposing (class, disabled, id, type_)
 import Html.Events exposing (on, onClick, onMouseOut, onMouseOver)
 import Html.Events.Extra exposing (targetValueIntParse)
 import Json.Decode as Decode
@@ -95,7 +95,6 @@ type alias Settings msg =
     , dateStringFn : Zone -> Posix -> String
     , timeStringFn : Zone -> Posix -> String
     , zone : Zone
-    , isMouseOverDisabled : Bool
     , isFooterDisabled : Bool
     }
 
@@ -133,7 +132,6 @@ defaultSettings zone internalMsg =
     , dateStringFn = \_ _ -> ""
     , timeStringFn = \_ _ -> ""
     , zone = zone
-    , isMouseOverDisabled = False
     , isFooterDisabled = False
     }
 
@@ -595,30 +593,25 @@ viewDay settings model currentMonth day =
         dayClasses =
             DatePicker.Styles.durationDayClasses classPrefix (dayParts.month /= currentMonth) isDisabled isPicked isToday isBetween
 
-        defaultAttrs =
-            [ class dayClasses
-            , onClick <| settings.internalMsg (update settings SetRange (DatePicker model))
-            ]
-
         attrs =
             if isDisabled then
                 [ class dayClasses ]
 
-            else if settings.isMouseOverDisabled then
-                defaultAttrs
-
             else
-                (onMouseOver <| settings.internalMsg (update settings (SetHoveredDay day) (DatePicker model))) :: defaultAttrs
+                [ class dayClasses
+                , onClick <| settings.internalMsg (update settings SetRange (DatePicker model))
+                , onMouseOver <| settings.internalMsg (update settings (SetHoveredDay day) (DatePicker model))
+                ]
     in
-    div
-        attrs
-        [ text (String.fromInt dayParts.day) ]
+    button
+        ([ type_ "button", disabled isDisabled ] ++ attrs)
+        [ text <| String.fromInt dayParts.day ]
 
 
 viewDateTime : Settings msg -> String -> Posix -> Html msg
 viewDateTime settings classString dateTime =
     span []
-        [ text (settings.dateStringFn settings.zone dateTime)
+        [ text <| settings.dateStringFn settings.zone dateTime
         , span [ class (classPrefix ++ classString) ] [ text (settings.timeStringFn settings.zone dateTime) ]
         ]
 
