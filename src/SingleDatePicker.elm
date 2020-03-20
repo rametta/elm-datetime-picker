@@ -393,7 +393,8 @@ viewCalendarHeader settings model time =
         [ class (classPrefix ++ "calendar-header") ]
         [ div [ class (classPrefix ++ "calendar-header-row") ]
             [ div
-                [ id "previous-month", class (classPrefix ++ "calendar-header-chevron")
+                [ id "previous-month"
+                , class (classPrefix ++ "calendar-header-chevron")
                 , onClick <| settings.internalMsg <| update settings PrevMonth (DatePicker model)
                 ]
                 [ Icons.chevronLeft
@@ -402,9 +403,10 @@ viewCalendarHeader settings model time =
                 ]
             , div
                 [ class (classPrefix ++ "calendar-header-text") ]
-                [ div [ id "month"] [ text monthName ] ]
+                [ div [ id "month" ] [ text monthName ] ]
             , div
-                [ id "next-month", class (classPrefix ++ "calendar-header-chevron")
+                [ id "next-month"
+                , class (classPrefix ++ "calendar-header-chevron")
                 , onClick <| settings.internalMsg <| update settings NextMonth (DatePicker model)
                 ]
                 [ Icons.chevronRight
@@ -414,7 +416,8 @@ viewCalendarHeader settings model time =
             ]
         , div [ class (classPrefix ++ "calendar-header-row") ]
             [ div
-                [ id "previous-year", class (classPrefix ++ "calendar-header-chevron")
+                [ id "previous-year"
+                , class (classPrefix ++ "calendar-header-chevron")
                 , onClick <| settings.internalMsg <| update settings PrevYear (DatePicker model)
                 ]
                 [ Icons.chevronsLeft
@@ -423,9 +426,10 @@ viewCalendarHeader settings model time =
                 ]
             , div
                 [ class (classPrefix ++ "calendar-header-text") ]
-                [ div [ id "year"] [ text year ] ]
+                [ div [ id "year" ] [ text year ] ]
             , div
-                [ id "next-year", class (classPrefix ++ "calendar-header-chevron")
+                [ id "next-year"
+                , class (classPrefix ++ "calendar-header-chevron")
                 , onClick <| settings.internalMsg <| update settings NextYear (DatePicker model)
                 ]
                 [ Icons.chevronsRight
